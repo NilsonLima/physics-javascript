@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>Particle Falldown</title>
+ </head>
+ <style>
+   canvas {
+     border:1px solid #999;
+     margin:10px auto;
+     display:block;
+   }
+ </style>
+ <body>
+   <canvas id="canvas" width="400" height="400"></canvas>
+ </body>
+ <script>
+    const canvasContext = document.getElementById('canvas').getContext('2d');
+
+    const rho = 1.125;
+    const e = -0.5;
+    const Cd = 0.25;
+    const g = 9.81;
+    const r = 0.20; // in meters
+    const m = 0.5; // in kilograms
+
+    const A = Math.PI * r * r;
+
+    const dt = 1 / 60; // in seconds
+    const height = 400; // in meters
+    const width = 400;
+    const x = 200;
+
+    canvasContext.fillStyle = 'red';
+
+    const getDeltaPosition = function(velocity, acceleration) {
+      return (velocity * dt + acceleration * dt * dt * 0.5) * 100;
+    };
+
+    const getDeltaVelocity = function(acceleration, nextAcceleration) {
+      return (acceleration + nextAcceleration) * 0.5 * dt;
+    };
+
+    const getDragForce = function(velocity) {
+      return 0.5 * rho * velocity * velocity * Cd * A;
+    };
+
+    let ay = g;
+    let fy = 0;
+    let y = height;
+    let vy = 0;
+    let nextAy = 0;
+
+    const draw = function() {
+      canvasContext.clearRect(0, 0, width, height);
+      canvasContext.beginPath();
+      canvasContext.arc(x, height - y, r * 100, 0, Math.PI * 2, true);
+      canvasContext.fill();
+      canvasContext.closePath();
+    };
+ 
+    const loop = function() {
+      fy = m * g - getDragForce(vy);
+      y -= getDeltaPosition(vy, ay);
+      nextAy = fy / m;
+      vy += getDeltaVelocity(ay, nextAy);
+      ay = nextAy;
+
+      if (y - (r * 100) < 0) {
+        vy *= e;
+        y = (r * 100);
+      }
+
+      draw();
+    };
+ 
+    setInterval(loop, dt * 1000);
+ </script>
+</html>
+

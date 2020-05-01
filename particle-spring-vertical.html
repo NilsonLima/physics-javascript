@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>Particle-Spring Vertical</title>
+ </head>
+ <style>
+   canvas {
+     border:1px solid #999;
+     margin:10px auto;
+     display:block;
+   }
+ </style>
+ <body>
+   <canvas id="canvas" width="400" height="400"></canvas>
+ </body>
+ <script>
+    const canvasContext = document.getElementById('canvas').getContext('2d');
+
+    const rho = 1.225;
+    const e = -0.5;
+    const Cd = 0.25;
+    const g = 9.81;
+    const r = 0.25; // in meters
+    const m = 0.5; // in kilograms
+    const throwUpForce = 100;
+
+    const A = Math.PI * r * r;
+
+    const dt = 1 / 60; // in seconds
+    const height = 400; // in meters
+    const width = 400;
+    const x = 200;
+
+    canvasContext.fillStyle = 'red';
+
+    let fy = 0;
+    let ay = 0;
+    let k = 0.1;
+    let y = height / 2;
+
+    const draw = function() {
+      canvasContext.clearRect(0, 0, width, height);
+      canvasContext.beginPath();
+      canvasContext.arc(x, height - y, r * 100, 0, Math.PI * 2, true);
+      canvasContext.fill();
+      canvasContext.closePath();
+    };
+ 
+    const loop = function() {
+    //   fa = 0.5 * rho * vy * vy * Cd * A;
+      fy = m * g - k * y;
+      y -= m * ay / k;
+      ay = fy / m;
+
+      console.log(y, ay, fy);
+
+      // if (y - (r * 100) < 0) {
+      //   vy *= e;
+      //   y = (r * 100);
+      // }
+
+      draw();
+    };
+ 
+    // loop();
+    // loop();
+    // loop();
+    // loop();
+    // loop();
+    // loop();
+    // loop();
+    setInterval(loop, dt * 1000);
+ </script>
+</html>
+
